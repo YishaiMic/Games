@@ -1,0 +1,67 @@
+body {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  padding: 0 5em;
+}
+body > * {
+  flex: 1;
+}
+
+.centerdiv {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.tic-tac-toe {
+  display: grid;
+  grid-template-columns: repeat(3, 100px); /* Adjust the width as needed */
+  grid-template-rows: repeat(3, 100px); /* Adjust the height as needed */
+  grid-gap: 5px; /* Adjust the gap between cells */
+}
+
+@keyframes scale {
+  0% {
+    scale: 0.5;
+    opacity: 0;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eee;
+  font-size: 32px;
+  border: 2px solid #333;
+  cursor: pointer;
+  font-family: cursive;
+  /*"Lobster", cursive;*/
+  animation: scale 1000ms;
+}
+
+.cell:hover {
+  background-color: #ddd;
+}
+
+.startbutton,
+.restartbutton {
+  margin: 1.5em;
+} /* You can style X and O as needed */
+
+.counterX,
+.counterY {
+  margin-top: 5em;
+  font-size: 4em;
+  font-weight: bold;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
