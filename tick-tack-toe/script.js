@@ -1,8 +1,16 @@
+/* need to fix:
+1. winner anouncment in botGame (only X wins)
+2. closing game when choosing botgame and visa versa
+3. checking if nobody won in botplayer game (counter 9 not relevant)
+*/
+
 document.querySelector(".startbutton").addEventListener("click", game);
 document.querySelector(".restartbutton").addEventListener("click", restart);
 document.querySelector(".botbutton").addEventListener("click", botGame);
 
 let isGameActive = true;
+let humanGameRunning = false;
+let botGameRunning = false;
 let choice = "X";
 let counter = 0;
 const player1 = "X";
@@ -58,6 +66,7 @@ function botPlayer() {
             break;
         }
       }
+
       console.log(xCoun, zeroCoun, emptyCoun);
       if (zeroCoun == 2 && emptyCoun == 1) {
         console.log("two zeros");
@@ -66,34 +75,32 @@ function botPlayer() {
         console.log("two X's");
         xArr = subArr;
       }
-      // console.log(xArr);
-      console.log(zeroArr);
-      console.log(xArr);
-      if (zeroArr) {
-        for (let item of zeroArr) {
-          item.textContent =
-            item.textContent === ""
-              ? (item.textContent = "0")
-              : item.textContent;
-        }
-        checkWinner(choice);
-        return;
-      } else if (xArr) {
-        for (let item of xArr) {
-          item.textContent =
-            item.textContent === ""
-              ? (item.textContent = "0")
-              : item.textContent;
-        }
-        checkWinner(choice);
-        return;
-      } else {
-        for (let row of arraysForBot) {
-          for (let item of row) {
-            if (item.textContent == "") {
-              item.textContent = "0";
-              return;
-            }
+    }
+    // console.log(xArr);
+    console.log(zeroArr);
+    console.log(xArr);
+    if (zeroArr) {
+      for (let item of zeroArr) {
+        item.textContent =
+          item.textContent === "" ? (item.textContent = "0") : item.textContent;
+      }
+      checkWinner(choice);
+      return;
+    } else if (xArr) {
+      for (let item of xArr) {
+        item.textContent =
+          item.textContent === "" ? (item.textContent = "0") : item.textContent;
+      }
+      checkWinner(choice);
+      return;
+    } else {
+      for (let row of arraysForBot) {
+        for (let item of row) {
+          if (item.textContent == "") {
+            item.textContent = "0";
+            checkWinner(choice);
+
+            return;
           }
         }
       }
@@ -167,12 +174,15 @@ function clickingBot(clicked, choice) {
   }
 }
 
-function restart() {
-  isGameActive = true;
-  const cells = document.querySelectorAll(".cell");
+function clearCells() {
   cells.forEach(function (cell) {
     cell.textContent = "";
   });
+}
+
+function restart() {
+  isGameActive = true;
+  clearCells();
   const x = document.querySelector(".winner");
   x.textContent = "";
   choice = "X";
@@ -180,23 +190,36 @@ function restart() {
 }
 
 function game() {
+  clearCells();
+  humanGameRunning = true;
   choice = player1;
   const cells = document.querySelectorAll(".cell");
   cells.forEach(function (cell) {
     cell.addEventListener("click", function (event) {
       clicking(event, choice);
+      if (botGameRunning) {
+        cell.removeEventListener("click", clickingBot);
+      }
     });
   });
+  botGameRunning = false;
 }
 
 function botGame() {
+  clearCells();
+  botGameRunning = true;
+
   choice = player1;
   const cells = document.querySelectorAll(".cell");
   cells.forEach(function (cell) {
     cell.addEventListener("click", function (event) {
       clickingBot(event, choice);
     });
+    if (humanGameRunning) {
+      cell.removeEventListener("click", clicking);
+    }
   });
+  humanGameRunning = false;
 }
 
 // function animateLetter() {
