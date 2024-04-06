@@ -152,17 +152,15 @@ function clicking(clicked) {
   }
 }
 
-function clickingBot(clicked) {
+function clickingBot(clicked, choice) {
   if (!isGameActive) return;
   const cell = clicked.target;
   if (cell.textContent === "") {
     cell.textContent = choice;
     counter++;
-    if (counter >= 5) {
+    console.log(counter);
+    if (counter >= 3) {
       checkWinner(choice);
-    }
-    if (counter == 9) {
-      statusGameMessage.textContent = "Nobody won 😪";
     }
     // choice = choice === player1 ? player2 : player1;
     setTimeout(botPlayer, 500);
