@@ -1,7 +1,5 @@
 /* need to fix:
-1. winner anouncment in botGame (only X wins)
 2. closing game when choosing botgame and visa versa
-3. checking if nobody won in botplayer game (counter 9 not relevant)
 */
 
 document.querySelector(".startbutton").addEventListener("click", game);
@@ -48,7 +46,9 @@ function botPlayer() {
       col2,
       col3,
     ];
-
+    choice = "0";
+    counter++;
+    console.log(counter);
     for (let subArr of allOpts) {
       let xCoun = 0;
       let zeroCoun = 0;
@@ -141,9 +141,12 @@ function checkWinner(choice) {
       : (counterY.textContent += "I ");
     isGameActive = false;
   }
+  if (counter == 9) {
+    statusGameMessage.textContent = "Nobody won 😪";
+  }
 }
 
-function clicking(clicked) {
+const clicking = (clicked) => {
   if (!isGameActive) return;
   const cell = clicked.target;
   if (cell.textContent === "") {
@@ -152,27 +155,28 @@ function clicking(clicked) {
     if (counter >= 5) {
       checkWinner(choice);
     }
-    if (counter == 9) {
-      statusGameMessage.textContent = "Nobody won 😪";
-    }
+
     choice = choice === player1 ? player2 : player1;
   }
-}
+};
 
-function clickingBot(clicked, choice) {
+const clickingBot = (clicked, choice) => {
+  counterX.textContent = "";
+  counterY.textContent = "";
+
+  choice = "X";
   if (!isGameActive) return;
   const cell = clicked.target;
   if (cell.textContent === "") {
     cell.textContent = choice;
     counter++;
-    console.log(counter);
     if (counter >= 3) {
       checkWinner(choice);
     }
     // choice = choice === player1 ? player2 : player1;
     setTimeout(botPlayer, 500);
   }
-}
+};
 
 function clearCells() {
   cells.forEach(function (cell) {
@@ -188,39 +192,60 @@ function restart() {
   choice = "X";
   counter = 0;
 }
+let clickingEventListener, clickingBotEventListener;
+
+function removeAllEventListeners() {
+  const cells = document.querySelectorAll(".cell");
+  for (let cell of cells) {
+    cell.removeEventListener("click", clickingEventListener);
+    cell.removeEventListener("click", clickingBotEventListener);
+  }
+}
 
 function game() {
+  counter = 0;
   clearCells();
   humanGameRunning = true;
   choice = player1;
+
+  removeAllEventListeners(); // Remove existing event listeners
+
+  clickingEventListener = (_event_) => clicking(_event_, choice);
+
   const cells = document.querySelectorAll(".cell");
-  cells.forEach(function (cell) {
-    cell.addEventListener("click", function (event) {
-      clicking(event, choice);
-      if (botGameRunning) {
-        cell.removeEventListener("click", clickingBot);
-      }
-    });
-  });
+  for (let cell of cells) {
+    cell.addEventListener("click", clickingEventListener);
+  }
+
   botGameRunning = false;
 }
 
 function botGame() {
+  counter = 0;
   clearCells();
   botGameRunning = true;
-
   choice = player1;
+
+  removeAllEventListeners(); // Remove existing event listeners
+
+  clickingBotEventListener = (_event_) => clickingBot(_event_, choice);
+
   const cells = document.querySelectorAll(".cell");
-  cells.forEach(function (cell) {
-    cell.addEventListener("click", function (event) {
-      clickingBot(event, choice);
-    });
-    if (humanGameRunning) {
-      cell.removeEventListener("click", clicking);
-    }
-  });
+  for (let cell of cells) {
+    cell.addEventListener("click", clickingBotEventListener);
+  }
+
   humanGameRunning = false;
 }
+// cells.forEach(function (cell) {
+//   cell.addEventListener("click", function (event) {
+//     clickingBot(event, choice);
+//   })
+//   if (humanGameRunning) {
+//     cell.removeEventListener("click", clicking);
+//     console.log("removed cliking");
+//   }
+// });
 
 // function animateLetter() {
 //   const letter = document.querySelector(".winner");
